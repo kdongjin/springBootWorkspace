@@ -20,19 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class BoardController {
-	private final BoardServiceImpl boardServiceImpl;
+	
 	@Autowired
 	private BoardService boardService;
 
-	BoardController(BoardServiceImpl boardServiceImpl) {
-		this.boardServiceImpl = boardServiceImpl;
-	}
+	
 
 	// 게시판 입력창화면 요청
 	@GetMapping(value = "/board/insertForm")
 	public String boardInsertForm(BoardDTO boardDTO, Model model) {
 		model.addAttribute("boardDTO", boardDTO);
-		return "board/fail";
+		return "board/insertForm";
 	}
 
 	// 게시판 입력저장 요청
@@ -54,7 +52,7 @@ public class BoardController {
 	@GetMapping(value = "/board/list")
 	public String boardList(Model model) throws Exception {
 
-		List<BoardDTO> list = boardServiceImpl.list();
+		List<BoardDTO> list = boardService.list();
 		if (list == null || list.size() <= 0) {
 			return "board/fail";
 		}
@@ -66,10 +64,10 @@ public class BoardController {
 	// 선택된 게시글 요청
 	@GetMapping(value = "/board/select")
 	public String boardSelect(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardNo() <= 0) {
+		if (boardDTO.getBoardno()<= 0) {
 			return "board/fail";
 		}
-		boardDTO = boardServiceImpl.select(boardDTO);
+		boardDTO = boardService.select(boardDTO);
 		if (boardDTO == null) {
 			return "board/fail";
 		}
@@ -80,10 +78,10 @@ public class BoardController {
 	// 선택된 게시글 삭제요청
 	@GetMapping(value = "/board/delete")
 	public String boardDelete(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardNo() <= 0) {
+		if (boardDTO.getBoardno() <= 0) {
 			return "board/fail";
 		}
-		boolean result = boardServiceImpl.delete(boardDTO);
+		boolean result = boardService.delete(boardDTO);
 		if (result == false) {
 			return "board/fail";
 		}
@@ -94,10 +92,10 @@ public class BoardController {
 	// 게시판 수정폼 화면 요청
 	@GetMapping(value = "/board/updateForm")
 	public String boardUpdateForm(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardNo() <= 0) {
+		if (boardDTO.getBoardno() <= 0) {
 			return "board/fail";
 		}
-		boardDTO = boardServiceImpl.select(boardDTO);
+		boardDTO = boardService.select(boardDTO);
 
 		model.addAttribute("boardDTO", boardDTO);
 		return "board/updateForm";
@@ -106,10 +104,10 @@ public class BoardController {
 	// 게시판내용 수정 요청
 	@PostMapping(value = "/board/update")
 	public String  boardUpdate(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardNo() <= 0) {
+		if (boardDTO.getBoardno() <= 0) {
 			return "board/fail";
 		}
-		boolean result = boardServiceImpl.update(boardDTO);
+		boolean result = boardService.update(boardDTO);
 	
 		if (result == false) {
 			return "board/fail";
