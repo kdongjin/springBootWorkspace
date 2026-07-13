@@ -22,15 +22,16 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional
 	public boolean insert(BoardDTO boardDTO) throws Exception {
-		if (boardDTO == null || boardDTO.getTitle() == null) {
+		if (boardDTO == null || boardDTO.getTitle().isEmpty() == true) {
 			return false;
 		}
 		Board board = new Board();
 		board.setTitle(boardDTO.getTitle());
 		board.setWriter(boardDTO.getWriter());
 		board.setContent(boardDTO.getContent());
-
-		board = repository.save(board);
+		
+		//insert into board values(~~~);
+		board = repository.save(board); 
 		return (board == null) ? (false) : (true);
 	}
 
@@ -38,12 +39,13 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional(readOnly = true)
 	public BoardDTO select(BoardDTO boardDTO) throws Exception {
 		// return repository.getOne(boardNo);
-		Board board = repository.getReferenceById(boardDTO.getBoardno());
+		//select * from board where board_no = 10; 
+		Board board = repository.getReferenceById(boardDTO.getBoardNo());
 
-		boardDTO.setBoardno((board.getBoardno()));
+		boardDTO.setBoardNo((board.getBoardNo()));
 		boardDTO.setTitle(board.getTitle());
 		boardDTO.setContent(board.getContent());
-		boardDTO.setRegdate(board.getRegdate());
+		boardDTO.setRegDate(board.getRegDate());
 		boardDTO.setWriter(board.getWriter());
 
 		return boardDTO;
@@ -54,9 +56,10 @@ public class BoardServiceImpl implements BoardService {
 	public boolean update(BoardDTO boardDTO) throws Exception {
 		try {
 			// 1. DB에서 게시글 조회 (값이 없으면 NoSuchElementException 발생)
-			Board board = repository.findById(boardDTO.getBoardno()).orElseThrow();
+			Board board = repository.findById(boardDTO.getBoardNo()).orElseThrow();
 
 			// 2. DTO의 새로운 데이터로 변경 (영속성 컨텍스트 변경 감지)
+			//update board set title = '수정내용', content = '수정내용' where board_no = 10;  
 			board.setTitle(boardDTO.getTitle());
 			board.setContent(boardDTO.getContent());
 
@@ -76,7 +79,8 @@ public class BoardServiceImpl implements BoardService {
 		
 		try {
 	        // 1. 파라미터로 넘어온 번호로 데이터 삭제 진행
-	        repository.deleteById(boardDTO.getBoardno());
+			//delete from board where board_no = 10
+	        repository.deleteById(boardDTO.getBoardNo());
 	        
 	        // 2. 성공 시 true 반환
 	        return true;
@@ -91,7 +95,8 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<BoardDTO> list() throws Exception {
-		 List<Board> list = repository.findAll(Sort.by(Direction.DESC, "boardno"));
+		 //select * from board order by board_no desc; 
+		 List<Board> list = repository.findAll(Sort.by(Direction.DESC, "boardNo"));
 		 
 		 if(list.size() <= 0) {
 				return null; 
@@ -100,9 +105,9 @@ public class BoardServiceImpl implements BoardService {
 			
 			for (Board board : list) {
 				BoardDTO boardDTO = new BoardDTO();
-				boardDTO.setBoardno(board.getBoardno());
+				boardDTO.setBoardNo(board.getBoardNo());
 				boardDTO.setContent(board.getContent());
-				boardDTO.setRegdate(board.getRegdate());
+				boardDTO.setRegDate(board.getRegDate());
 				boardDTO.setTitle(board.getTitle());
 				boardDTO.setWriter(board.getWriter());
 				list2.add(boardDTO);

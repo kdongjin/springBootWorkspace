@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 public class BoardDTO {
-	private long boardno; 
+	private Long boardNo; 
 	private String title; 
 	private String content; 
 	private String writer; 
-	private Date regdate; 
+	private Date regDate; 
 }

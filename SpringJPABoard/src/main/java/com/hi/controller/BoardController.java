@@ -64,7 +64,7 @@ public class BoardController {
 	// 선택된 게시글 요청
 	@GetMapping(value = "/board/select")
 	public String boardSelect(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardno()<= 0) {
+		if (boardDTO.getBoardNo()<= 0) {
 			return "board/fail";
 		}
 		boardDTO = boardService.select(boardDTO);
@@ -78,7 +78,7 @@ public class BoardController {
 	// 선택된 게시글 삭제요청
 	@GetMapping(value = "/board/delete")
 	public String boardDelete(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardno() <= 0) {
+		if (boardDTO.getBoardNo() <= 0) {
 			return "board/fail";
 		}
 		boolean result = boardService.delete(boardDTO);
@@ -92,7 +92,7 @@ public class BoardController {
 	// 게시판 수정폼 화면 요청
 	@GetMapping(value = "/board/updateForm")
 	public String boardUpdateForm(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardno() <= 0) {
+		if (boardDTO.getBoardNo() <= 0) {
 			return "board/fail";
 		}
 		boardDTO = boardService.select(boardDTO);
@@ -104,7 +104,7 @@ public class BoardController {
 	// 게시판내용 수정 요청
 	@PostMapping(value = "/board/update")
 	public String  boardUpdate(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardno() <= 0) {
+		if (boardDTO.getBoardNo() <= 0) {
 			return "board/fail";
 		}
 		boolean result = boardService.update(boardDTO);
