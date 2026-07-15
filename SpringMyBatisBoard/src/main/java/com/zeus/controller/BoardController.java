@@ -1,9 +1,8 @@
-package com.hi.controller;
-
-import com.hi.service.BoardServiceImpl;
+package com.zeus.controller;
 
 import java.util.List;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,18 +11,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.hi.dto.BoardDTO;
-import com.hi.service.BoardService;
+import com.zeus.dto.BoardDTO;
+import com.zeus.service.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@MapperScan(basePackages = "com.zeus.mapper")
 public class BoardController {
-	
-	//@Autowired
+
+	// @Autowired
 	private BoardService boardService;
-	
+
 	@Autowired
 	public void setBoardService(BoardService boardService) {
 		this.boardService = boardService;
@@ -33,8 +33,6 @@ public class BoardController {
 //	public BoardController(BoardService boardService) {
 //		this.boardService = boardService;
 //	}
-	
-	
 
 	// 게시판 입력창화면 요청
 	@GetMapping(value = "/board/insertForm")
@@ -42,8 +40,6 @@ public class BoardController {
 		model.addAttribute("boardDTO", boardDTO);
 		return "board/insertForm";
 	}
-
-	
 
 	// 게시판 입력저장 요청
 	@PostMapping(value = "/board/insert")
@@ -55,7 +51,7 @@ public class BoardController {
 			rttr.addFlashAttribute("msg", "게시글입력이 실패되었습니다.");
 		} else {
 			rttr.addFlashAttribute("msg", "게시글입력이 성공되었습니다.");
-			rttr.addAttribute("writer",boardDTO.getWriter());  // /board/list?writer=kdj
+			rttr.addAttribute("writer", boardDTO.getWriter()); // /board/list?writer=kdj
 		}
 		return "redirect:/board/list";
 	}
@@ -76,7 +72,7 @@ public class BoardController {
 	// 선택된 게시글 요청
 	@GetMapping(value = "/board/select")
 	public String boardSelect(BoardDTO boardDTO, Model model) throws Exception {
-		if (boardDTO.getBoardNo()<= 0) {
+		if (boardDTO.getBoardNo() <= 0) {
 			return "board/fail";
 		}
 		boardDTO = boardService.select(boardDTO);
@@ -115,16 +111,36 @@ public class BoardController {
 
 	// 게시판내용 수정 요청
 	@PostMapping(value = "/board/update")
-	public String  boardUpdate(BoardDTO boardDTO, Model model) throws Exception {
+	public String boardUpdate(BoardDTO boardDTO, Model model) throws Exception {
 		if (boardDTO.getBoardNo() <= 0) {
 			return "board/fail";
 		}
 		boolean result = boardService.update(boardDTO);
-	
+
 		if (result == false) {
 			return "board/fail";
 		}
 
 		return "board/success";
 	}
+
+	// 게시판 수정폼 화면 요청
+	@PostMapping(value = "/board/search")
+	public String boardSearch(BoardDTO boardDTO, Model model) throws Exception {
+		List<BoardDTO> list = boardService.search(boardDTO);
+		if (list == null || list.size() <= 0) {
+			return "board/fail";
+		}
+		model.addAttribute("list", list);
+		return "board/list"; 
+	}
 }
+
+
+
+
+
+
+
+
+
