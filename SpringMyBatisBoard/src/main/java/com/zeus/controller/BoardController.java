@@ -6,12 +6,15 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.zeus.dto.BoardDTO;
+import com.zeus.exception.BoardRecordNotFoundException;
 import com.zeus.service.BoardService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +46,20 @@ public class BoardController {
 
 	// 게시판 입력저장 요청
 	@PostMapping(value = "/board/insert")
-	public String boardInsert(BoardDTO boardDTO, Model model, RedirectAttributes rttr) throws Exception {
+	public String boardInsert(@Validated BoardDTO boardDTO, BindingResult bindResult, Model model, RedirectAttributes rttr) throws Exception {
 		log.info("board/insert" + boardDTO.toString());
+		
+		if(bindResult.hasErrors()) {
+			return "board/insertForm";
+		}
+		
+		
+		
 		boolean result = boardService.insert(boardDTO);
 
 		if (result == false) {
-			rttr.addFlashAttribute("msg", "게시글입력이 실패되었습니다.");
+			//rttr.addFlashAttribute("msg", "게시글입력이 실패되었습니다.");
+			throw new BoardRecordNotFoundException("title이 입력이 안되었습니다."+boardDTO.toString()); 
 		} else {
 			rttr.addFlashAttribute("msg", "게시글입력이 성공되었습니다.");
 			rttr.addAttribute("writer", boardDTO.getWriter()); // /board/list?writer=kdj
@@ -77,7 +88,8 @@ public class BoardController {
 		}
 		boardDTO = boardService.select(boardDTO);
 		if (boardDTO == null) {
-			return "board/fail";
+			//return "board/fail";
+			throw new BoardRecordNotFoundException(boardDTO.getBoardNo()+"번 게시글은 없는 게시글입니다.!");
 		}
 		model.addAttribute("boardDTO", boardDTO);
 		return "board/select";

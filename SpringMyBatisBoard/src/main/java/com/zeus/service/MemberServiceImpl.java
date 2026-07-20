@@ -39,7 +39,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Member> list() throws Exception {
 		return mapper.list();
 	}
@@ -82,6 +82,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Member selectMember(Member member) throws Exception {
 		
 		return mapper.selectMember(member);
